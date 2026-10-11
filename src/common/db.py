@@ -17,7 +17,7 @@ def reset():
 def init_db():
     with conn() as c:
         c.execute("""CREATE TABLE IF NOT EXISTS signals (
-            signal_id TEXT PRIMARY KEY, ts TEXT, ticker TEXT, kind TEXT, source TEXT,
+            signal_id TEXT PRIMARY KEY, doc_id TEXT, ts TEXT, ticker TEXT, kind TEXT, source TEXT,
             event_type TEXT, sentiment REAL, impact INTEGER, confidence REAL, novelty REAL,
             text TEXT, url TEXT)""")
         c.execute("CREATE TABLE IF NOT EXISTS weights (ts TEXT, ticker TEXT, weight REAL, z REAL)")

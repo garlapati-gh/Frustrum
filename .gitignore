@@ -1,0 +1,17 @@
+.env
+kaggle.json
+__pycache__/
+*.pyc
+.venv/
+data/raw/
+data/*.db
+data/*.csv
+data/*.jsonl
+!data/sample_*.jsonl
+!data/prices_sample.csv
+!data/tickers.csv
+!data/sector_sensitivity.csv
+!data/event_prototypes.json
+!data/demo_events.json
+.DS_Store
+

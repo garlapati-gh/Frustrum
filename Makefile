@@ -2,10 +2,10 @@ setup:
 	pip install -r requirements.txt
 
 data:
-	python scripts/download_data.py
+	python -m scripts.download_data
 
 score:
-	python scripts/precompute_scores.py
+	python -m scripts.precompute_scores
 
 run-api:
 	uvicorn src.api.main:app --port 8000

@@ -1,0 +1,10 @@
+{
+    "credit": ["agency cuts credit rating to junk", "company misses debt payment"],
+    "ma": ["acquire", "merger", "takeover", "buyout"],
+    "earnings": ["quarterly profit beats analyst estimates", "company cuts full-year guidance"],
+    "regulatory": ["antitrust probe launched", "sec probe", "fine", "lawsuit"],
+    "geopolitical": ["new sanctions announced on oil exports", "military conflict disrupts shipping routes"],
+    "management": ["CEO resigns unexpectedly", "workers go on strike"],
+    "product": ["major product recall announced", "new product launch delayed"],
+    "macro": ["central bank raises interest rates", "inflation hits record high"]
+}

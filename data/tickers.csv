@@ -1,0 +1,16 @@
+ticker,name,aliases,sector,peers
+AAPL,Apple,iPhone|Mac|Tim Cook,Technology,MSFT|GOOGL
+MSFT,Microsoft,Windows|Azure|Satya,Technology,AAPL|GOOGL
+NVDA,NVIDIA,GeForce|Jensen,Technology,AAPL|MSFT
+GOOGL,Alphabet,Google|YouTube|Sundar,Communication,MSFT|AAPL
+AMZN,Amazon,AWS|Bezos|Jassy,Consumer Discretionary,WMT
+JPM,JPMorgan,JPM|Chase|Dimon,Financials,BAC
+BAC,Bank of America,BofA|Moynihan,Financials,JPM
+XOM,Exxon,ExxonMobil|Woods,Energy,CVX
+CVX,Chevron,Wirth,Energy,XOM
+JNJ,Johnson & Johnson,J&J|Band-Aid,Health Care,PFE
+PFE,Pfizer,Bourla,Health Care,JNJ
+WMT,Walmart,McMillon,Consumer Staples,AMZN|KO
+KO,Coca-Cola,Coke|Quincey,Consumer Staples,WMT
+BA,Boeing,Airbus|Calhoun,Industrials,
+DIS,Disney,Iger|Marvel|ESPN,Communication,GOOGL
