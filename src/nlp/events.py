@@ -12,7 +12,10 @@ KEYWORDS = {
     "ma": ["acquire", "merger", "takeover", "buyout"],
     "earnings": ["earnings", "quarterly results", "eps", "guidance"],
     "regulatory": ["antitrust", "sec probe", "fine", "lawsuit"],
-    "geopolitical": ["sanction", "tariff", "war", "embargo"]
+    "geopolitical": ["sanction", "tariff", "war", "embargo"],
+    "product": ["product", "launch", "unveil", "recall", "release", "device"],
+    "management": ["ceo", "resigns", "executive", "board", "strike"],
+    "macro": ["interest rate", "inflation", "federal reserve", "central bank", "gdp"]
 }
 
 def init_embedder():
