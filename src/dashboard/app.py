@@ -60,7 +60,13 @@ with tab_live:
 
         w["ts"] = pd.to_datetime(w["ts"])
         c1, c2, c3 = st.columns(3)
-        c1.metric("Simulated time", str(h.get("sim_time", "–"))[:16])
+        replay_time = h.get("sim_time")
+        replay_time = (
+            pd.to_datetime(replay_time, utc=True).strftime("%Y-%m-%d %H:%M UTC")
+            if replay_time
+            else "–"
+        )
+        c1.metric("Replay time (UTC)", replay_time)
         c2.metric("Rebalances", w["ts"].nunique())
         last = w[w["ts"] == w["ts"].max()].set_index("ticker")
         c3.metric("Largest tilt from equal-weight", f"{(last['weight'] - 1/len(last)).abs().max():.2%}")
@@ -120,14 +126,19 @@ with tab_feed:
         sigs = sigs.sort_values("ts", ascending=False)
 
         # Colour rows by sentiment
-        def row_color(s):
-            if s > 0.2:   return ["background-color: #d4edda"] * len(s)
-            if s < -0.2:  return ["background-color: #f8d7da"] * len(s)
-            return [""] * len(s)
+        def row_color(row):
+            sentiment = row["sentiment"]
+            if sentiment > 0.2:
+                color = "background-color: #d4edda"
+            elif sentiment < -0.2:
+                color = "background-color: #f8d7da"
+            else:
+                color = ""
+            return [color] * len(row)
 
         cols_show = ["ts", "ticker", "kind", "source", "event_type", "sentiment", "impact", "confidence", "text"]
         cols_show = [c for c in cols_show if c in sigs.columns]
-        styled = sigs[cols_show].style.apply(lambda r: row_color(r["sentiment"]) if "sentiment" in r else [""] * len(r), axis=1)
+        styled = sigs[cols_show].style.apply(row_color, axis=1)
         st.dataframe(styled, use_container_width=True, hide_index=True)
 
     signal_feed()
@@ -270,6 +281,10 @@ with tab_nlp:
 # ══════════════════════════════════════════════════════════════════════════
 with tab_ctrl:
     st.subheader("Replay Control")
+    st.caption(
+        "Replay timestamps come from the historical dataset (UTC), not your computer's live clock. "
+        "Starting a replay clears the previous run."
+    )
 
     col1, col2 = st.columns(2)
     with col1:
@@ -301,10 +316,24 @@ with tab_ctrl:
 
     c1, c2 = st.columns(2)
     if c1.button("▶ Start replay", type="primary"):
-        requests.post(f"{API}/replay/start",
-                      params=dict(speed=speed, start=start_date, end=end_date,
-                                  lambda_tilt=lam, turnover_cap=cap, cost_bps=cost))
-        st.success("Replay started! Switch to the Live Weights tab.")
+        try:
+            response = requests.post(
+                f"{API}/replay/start",
+                params=dict(
+                    speed=speed,
+                    start=start_date,
+                    end=end_date,
+                    lambda_tilt=lam,
+                    turnover_cap=cap,
+                    cost_bps=cost,
+                ),
+                timeout=10,
+            )
+            response.raise_for_status()
+        except requests.RequestException as exc:
+            st.error(f"Could not start replay. Check that the backend is running at {API}. ({exc})")
+        else:
+            st.success("Replay started! Switch to the Live Weights tab.")
     if c2.button("⏹ Stop"):
         requests.post(f"{API}/replay/stop")
         st.info("Replay stopped.")

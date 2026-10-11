@@ -9,6 +9,7 @@ data/prices.csv
 data/signals.jsonl
 data/backtest_results.csv
 data/equity_curves.csv
+data/cost_sensitivity.csv
 .DS_Store
 replay_error.log
 .pytest_cache/

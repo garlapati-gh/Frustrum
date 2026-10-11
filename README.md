@@ -6,7 +6,9 @@
 **College / Campus:** IIIT Lucknow
 **Module:** Module A: AI/NLP Risk Engine & Tactical Stock Index Rebalancer
 **Demo Video (YouTube Unlisted):** TODO
-**Presentation Deck:**   https://drive.google.com/file/d/1qDFOqGGCMK4S6gIWz3vnLxYys0wH82B6/view?usp=sharing
+**Presentation Deck:**  https://github.com/garlapati-gh/IIITL-Gagana-Hackathon/blob/main/docs/presentation.pdf.pdf
+and/ or
+ https://drive.google.com/file/d/1qDFOqGGCMK4S6gIWz3vnLxYys0wH82B6/view?usp=sharing
 **Source Repository:** https://github.com/garlapati-gh/IIITL-Gagana-Hackathon
 
 ---
@@ -172,7 +174,7 @@ Because the news is synthetic and its dates are drawn at random, backtest and va
 ## 4. Quickstart & Installation
 
 **Prerequisites:** Python 3.10-3.12, Git, a browser. Around 8 GB RAM and 3-5 GB disk recommended. CPU only.
-**Tested on:** TODO (state your OS).
+**Tested on:** Windows (Python 3.13.7; local validation).
 **Internet:** needed for `pip`, the one-time FinBERT and MiniLM downloads, and the yfinance price download. Afterwards, replay and the dashboard run from saved files.
 
 ```bash
@@ -235,18 +237,27 @@ curl localhost:8000/weights/latest
 - Strategies: equal-weight hold; equal-weight daily rebalance; naive sentiment tilt (no decay, confidence or cost control); Frustrum (full); Frustrum with decay, dedup, contagion or cost control removed.
 - Cost sensitivity at 0, 5, 10 and 25 bps for Frustrum vs the naive tilt.
 
-> TODO: run `make backtest` and paste the real output below. Do not publish numbers this repo did not produce.
+Backtest results from `make backtest` on the included generated signals and price data:
 
 | Strategy | Ann. return | Ann. vol | Sharpe | Max drawdown | Annual turnover | Cost drag (bps/yr) | Tracking error | Mean IC |
 |---|---|---|---|---|---|---|---|---|
-| Equal-weight, hold | TODO | TODO | TODO | TODO | TODO | TODO | TODO | n/a |
-| Equal-weight, daily rebal | TODO | TODO | TODO | TODO | TODO | TODO | TODO | n/a |
-| Naive sentiment tilt | TODO | TODO | TODO | TODO | TODO | TODO | TODO | n/a |
-| Frustrum (full) | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
-| Frustrum, no decay | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
-| Frustrum, no dedup | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
-| Frustrum, no contagion | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
-| Frustrum, no cost control | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
+| Equal-weight, hold | 19.39% | 10.25% | 1.8921 | -6.92% | 0.00% | 0.0 | 0.00% | n/a |
+| Equal-weight, daily rebal | 23.79% | 10.18% | 2.3378 | -6.51% | 296.50% | 14.8249 | 1.50% | n/a |
+| Naive sentiment tilt | 23.48% | 10.11% | 2.3233 | -6.55% | 1,708.13% | 85.4064 | 1.65% | n/a |
+| Frustrum (full) | 25.61% | 9.86% | 2.5960 | -6.68% | 749.02% | 37.4511 | 2.15% | 0.0108 |
+| Frustrum, no decay | 24.89% | 10.00% | 2.4881 | -6.86% | 642.50% | 32.1251 | 2.40% | -0.0213 |
+| Frustrum, no dedup | 25.54% | 9.86% | 2.5888 | -6.65% | 745.49% | 37.2743 | 2.14% | 0.0135 |
+| Frustrum, no contagion | 25.79% | 9.89% | 2.6089 | -6.79% | 766.74% | 38.3369 | 2.09% | 0.0180 |
+| Frustrum, no cost control | 25.68% | 9.94% | 2.5844 | -6.41% | 1,533.53% | 76.6766 | 1.93% | 0.0108 |
+
+Cost sensitivity results (Frustrum vs. naive sentiment tilt):
+
+| Cost (bps) | Frustrum Sharpe | Frustrum ann. return | Frustrum cost drag (bps/yr) | Naive Sharpe | Naive ann. return | Naive cost drag (bps/yr) |
+|---:|---:|---:|---:|---:|---:|---:|
+| 0 | 2.668 | 26.61% | 0.0 | 2.429 | 24.54% | 0.0 |
+| 5 | 2.596 | 25.61% | 37.5 | 2.323 | 23.48% | 85.4 |
+| 10 | 2.508 | 24.72% | 73.4 | 2.219 | 22.43% | 170.8 |
+| 25 | 2.375 | 23.36% | 183.5 | 1.911 | 19.34% | 427.0 |
 
 All results come from **synthetic news** and real daily prices, so they validate the mechanics, not real-world alpha.
 
