@@ -67,9 +67,20 @@ def run_replay(cfg, speed, stop, start=None, end=None):
             if new.empty and now.minute % 30:         # quiet tick: only check every 30 minutes
                 continue
             out = rb.step(now, sig[sig["ts"] <= now], prices, new)
-            if out: db.insert_step(out)
+            if out:
+                top_text = ""
+                if not new.empty:
+                    top_text = str(new.sort_values("impact", ascending=False)["text"].iloc[0])
+                else:
+                    recent = sig[sig["ts"] <= now].tail(3)
+                    if not recent.empty:
+                        top_text = str(recent.sort_values("impact", ascending=False)["text"].iloc[0])
+                out["headline"] = top_text
+                db.insert_step(out, top_headline=top_text)
             db.set_meta("sim_time", now.isoformat())
             time.sleep(5 * 60 / speed)
     except Exception as e:
+        err_msg = traceback.format_exc()
+        db.set_meta("error", str(e))
         with open("replay_error.log", "w") as f:
-            f.write(traceback.format_exc())
+            f.write(err_msg)

@@ -1,3 +1,7 @@
 [
-  {"name": "Recent Data Simulation", "start": "2023-01-01T00:00:00Z", "end": "2030-01-03T00:00:00Z"}
+  {
+    "name": "Live Demo Window (2 Weeks + BA Circuit Breaker)",
+    "start": "2026-09-19T00:00:00+00:00",
+    "end": "2026-10-03T00:00:00+00:00"
+  }
 ]

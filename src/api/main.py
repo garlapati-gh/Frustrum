@@ -10,13 +10,51 @@ app = FastAPI(title="Frustrum")
 cfg = load_config()
 _stop = threading.Event()
 
+from pydantic import BaseModel
+from src.nlp.pipeline import process
+from src.common.schemas import RawDoc
+from datetime import datetime, timezone
+
+class ScoreRequest(BaseModel):
+    text: str
+    ticker_hint: str | None = None
+    kind: str = "news"
+    source: str = "synthetic_news"
+
 @app.get("/health")
 def health():
     try:
         row = db.read("SELECT value FROM meta WHERE key='sim_time'")
-        return {"ok": True, "sim_time": row["value"].iloc[0] if len(row) else None}
-    except Exception:
-        return {"ok": False}
+        err_row = db.read("SELECT value FROM meta WHERE key='error'")
+        sim_time = row["value"].iloc[0] if len(row) else None
+        err = err_row["value"].iloc[0] if len(err_row) else None
+        return {"ok": err is None, "sim_time": sim_time, "error": err}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+@app.post("/score")
+def score_text(req: ScoreRequest):
+    doc = RawDoc(
+        doc_id="interactive_demo",
+        ts=datetime.now(timezone.utc),
+        source=req.source,
+        kind=req.kind if req.kind in ["news", "social"] else "news",
+        text=req.text,
+        ticker_hint=req.ticker_hint
+    )
+    res = process([doc])
+    if res:
+        return res[0].model_dump()
+    return {"error": "Failed to score headline"}
+
+@app.get("/trades")
+def trades(limit: int = 50):
+    q = "SELECT ts, ticker, old_weight, new_weight, reason, turnover, cost_bps, headline FROM trades WHERE ticker != 'ALL' ORDER BY ts DESC LIMIT ?"
+    res = db.read(q, (limit,)).to_dict("records")
+    if not res:
+        # fallback to all rows
+        res = db.read("SELECT * FROM trades ORDER BY ts DESC LIMIT ?", (limit,)).to_dict("records")
+    return res
 
 @app.get("/signals")
 def signals(ticker: str | None = None, since: str | None = None, limit: int = 100):

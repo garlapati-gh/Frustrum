@@ -5,7 +5,10 @@ from src.nlp.dedup import novelty
 from src.nlp.impact import predict_impact
 from src.common.schemas import Signal
 
-SRC_CRED = {"gdelt": 0.8, "newsapi": 0.8, "tweets": 0.5, "reddit": 0.4}
+SRC_CRED = {
+    "gdelt": 0.8, "newsapi": 0.8, "tweets": 0.5, "reddit": 0.4,
+    "synthetic_news": 0.8, "synthetic_social": 0.5
+}
 
 def process(docs):
     docs = sorted(docs, key=lambda d: d.ts)

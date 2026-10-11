@@ -87,5 +87,29 @@ def main():
     pd.DataFrame({k: (1 + d["ret"]).cumprod() for k, d in runs.items()}).to_csv("data/equity_curves.csv")
     print(table.round(4))
 
+    # Cost sensitivity evaluation across [0, 5, 10, 25] bps
+    cost_levels = [0, 5, 10, 25]
+    sens_rows = []
+    for c_bps in cost_levels:
+        c_cfg = copy.deepcopy(cfg)
+        c_cfg["rebalance"]["cost_bps"] = c_bps
+        res_frust = run_strategy("riskpulse", c_cfg, sig, px)[lambda d: d.index >= start]
+        p_frust = perf(res_frust, bench, bpy)
+        res_naive = run_strategy("naive", c_cfg, sig, px)[lambda d: d.index >= start]
+        p_naive = perf(res_naive, bench, bpy)
+        sens_rows.append({
+            "cost_bps": c_bps,
+            "frustrum_sharpe": round(p_frust["sharpe"], 3),
+            "frustrum_ann_ret": round(p_frust["ann_return"], 4),
+            "frustrum_cost_drag_bps": round(p_frust["cost_drag_bps_yr"], 1),
+            "naive_sharpe": round(p_naive["sharpe"], 3),
+            "naive_ann_ret": round(p_naive["ann_return"], 4),
+            "naive_cost_drag_bps": round(p_naive["cost_drag_bps_yr"], 1),
+        })
+    sens_df = pd.DataFrame(sens_rows)
+    sens_df.to_csv("data/cost_sensitivity.csv", index=False)
+    print("\n--- Cost Sensitivity Table ---")
+    print(sens_df)
+
 if __name__ == "__main__":
     main()

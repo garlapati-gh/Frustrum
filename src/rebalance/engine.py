@@ -16,8 +16,18 @@ class Rebalancer:
 
     def step(self, now, signals, prices, new_signals):
         rb = self.cfg["rebalance"]
+        px_slice = prices[prices.index <= now]
+        if len(px_slice) < 20:
+            return None
         fired = self.guard.update_breaker(new_signals, now)
-        corr = prices[prices.index <= now].resample("1D").last().pct_change().tail(rb.get("corr_days", 60)).corr()
+        daily_px = px_slice.resample("1D").last().dropna(how="all")
+        if len(daily_px) < 10:
+            return None
+        corr = daily_px.pct_change().dropna().tail(rb.get("corr_days", 60)).corr()
+        if corr.isna().all().all() or corr.empty:
+            corr = pd.DataFrame(np.eye(len(self.t)), index=self.t, columns=self.t)
+        else:
+            corr = corr.fillna(0.0)
         z = to_z(build_views(signals, now, self.cfg, self.t, self.sector_of,
                              self.sector_beta, corr), self.cfg)
         self.z_now = z
@@ -39,18 +49,20 @@ class Rebalancer:
                               [self.sector_of[t] for t in self.t], rb)
         delta = w_star - self.w.values
         turn = np.abs(delta).sum()
-        if not fired and turn > rb["turnover_cap"]:
+        cost_ctrl = self.cfg.get("ablation", {}).get("cost_control", True)
+        if cost_ctrl and not fired and turn > rb["turnover_cap"]:
             delta *= rb["turnover_cap"] / turn               # scale towards the old weights
             turn = np.abs(delta).sum()
         gain_bps = float(delta @ z.values) * rb["alpha_bps_per_z"]
         cost_bps = turn * rb["cost_bps"]
-        if not fired and (turn < rb["no_trade_band"] or gain_bps <= cost_bps):
+        if cost_ctrl and not fired and (turn < rb["no_trade_band"] or gain_bps <= cost_bps):
             return None                                     # not worth trading
+        w_prev = self.w.copy()
         self.w = pd.Series(self.w.values + delta, index=self.t)
         for i, t in enumerate(self.t):
             if abs(delta[i]) > 1e-4:
                 self.guard.last_change[t] = now
         self.cum_cost_bps += cost_bps
-        return {"ts": now, "weights": self.w.copy(), "z": z, "turnover": turn,
+        return {"ts": now, "weights": self.w.copy(), "w_prev": w_prev, "delta": pd.Series(delta, index=self.t), "z": z, "turnover": turn,
                 "cost_bps": cost_bps,
                 "reason": "breaker" if fired else ("view_move" if moved else "scheduled")}
