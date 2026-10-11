@@ -3,6 +3,8 @@ kaggle.json
 __pycache__/
 *.pyc
 .venv/
+.venv*/
+.vscode/settings.json
 data/raw/
 data/*.db
 data/prices.csv

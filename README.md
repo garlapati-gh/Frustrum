@@ -5,10 +5,8 @@
 **College Email ID:** lit2024017@iiitl.ac.in
 **College / Campus:** IIIT Lucknow
 **Module:** Module A: AI/NLP Risk Engine & Tactical Stock Index Rebalancer
-**Demo Video (YouTube Unlisted):** TODO
-**Presentation Deck:**  https://github.com/garlapati-gh/IIITL-Gagana-Hackathon/blob/main/docs/presentation.pdf.pdf
-and/ or
- https://drive.google.com/file/d/1qDFOqGGCMK4S6gIWz3vnLxYys0wH82B6/view?usp=sharing
+**Demo Video (YouTube Unlisted):** https://youtu.be/ikzXzja2z60
+**Presentation Deck:** https://github.com/garlapati-gh/IIITL-Gagana-Hackathon/blob/main/docs/presentation.pdf
 **Source Repository:** https://github.com/garlapati-gh/IIITL-Gagana-Hackathon
 
 ---
