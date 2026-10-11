@@ -16,15 +16,14 @@ rebalance:
   weight_max: 0.12
   max_tilt: 0.5
   sector_cap: 0.35
-  turnover_cap: 1.00
-  no_trade_band: 0.001
-  cost_bps: 0
-  cooldown_min: 1
-  risk_aversion: 1.0
-  view_trigger: 0.01
+  turnover_cap: 0.10
+  no_trade_band: 0.005
+  cost_bps: 5
+  cooldown_min: 15
+  risk_aversion: 2.0
+  view_trigger: 0.20
   max_gap_min: 60
 circuit_breaker: {impact_min: 9, sentiment_max: -0.6, freeze_min: 60}
 ablation: {decay: true, dedup: true, contagion: true, cost_control: true}
 replay: {speed: 600}
 view_scale: 0.4
-
